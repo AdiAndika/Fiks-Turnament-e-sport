@@ -3,7 +3,7 @@ import FollowedTournament from "./pages/FollowedTournament/FollowedTournament";
 import Tournament from "./pages/Tournament/Tournament";
 import ChatForumLandingPage from "./pages/Chat Forum/Chat-forum";
 import Playlist from "./pages/Match-replay/Match-replay";
-import AdminDashboard from "./pages/Admin/AdminDashboard";
+import AdminLayout from "./pages/Admin/layout";
 
 
 export const routes = [
@@ -32,11 +32,7 @@ export const routes = [
     path: "/playlist",
     element: <Playlist />,
   },
-  {
-    name: "Admin Dashboard",
-    path: "/admin",
-    element: <AdminDashboard />,
-  },
+
 
 ];
 

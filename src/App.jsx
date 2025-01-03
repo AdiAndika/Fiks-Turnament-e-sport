@@ -1,61 +1,71 @@
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Navbar } from "@/widgets/layout";
 import routes from "@/routes";
-import Tournament from "./pages/Tournament/Tournament"; // Halaman daftar turnamen
-import DetailTournament from "./pages/DetailTournament/DetailTournament"; // Halaman detail turnamen
-import TournamentRegistration from "./pages/DetailTournament/TournamentRegistration"; // Halaman pendaftaran turnamen
-import FollowedTournament from "./pages/FollowedTournament/FollowedTournament"; // Halaman daftar turnamen diikuti
-import DetailFollowedTournament from "./pages/DetailFollowedTournament/DetailFollowedTournament"; // Halaman detail turnamen diikuti
-import TeamList from "./pages/Member/TeamList/TeamList"; // Halaman list Team
-import TeamDetail from "./pages/Member/TeamDetail/TeamDetail"; // Halaman Detail Team
-import SignIn from "./pages/sign-in"; // Halaman Login
-import SignUp from "./pages/sign-up"; // Halaman Sign-Up
+import Tournament from "./pages/Tournament/Tournament";
+import DetailTournament from "./pages/DetailTournament/DetailTournament";
+import TournamentRegistration from "./pages/DetailTournament/TournamentRegistration";
+import FollowedTournament from "./pages/FollowedTournament/FollowedTournament";
+import DetailFollowedTournament from "./pages/DetailFollowedTournament/DetailFollowedTournament";
+import TeamList from "./pages/Member/TeamList/TeamList";
+import TeamDetail from "./pages/Member/TeamDetail/TeamDetail";
+import SignIn from "./pages/sign-in";
+import SignUp from "./pages/sign-up";
 import { Profile } from "./pages";
-import AdminDashboard from "./pages/Admin/AdminDashboard";
+import AdminLayout from "./pages/Admin/layout";
+import AdminDashboard from "./pages/Admin/page";
+import ManageUsers from "./pages/Admin/users/page";
+import ManageTournaments from "./pages/Admin/tournaments/page";
+import ForumDiscussions from "./pages/Admin/forum/page";
+import ReplayManagement from "./pages/Admin/replays/page";
 
 function App() {
   const { pathname } = useLocation();
-  const isAuthenticated = false; // Ganti ini dengan logika autentikasi seperti cek token, session, dll.
+  const isAuthenticated = false; // Replace this with your authentication logic
 
   return (
     <>
-      {/* Navbar hanya muncul jika bukan di halaman sign-in atau sign-up */}
-      {!(pathname === "/sign-in" || pathname === "/sign-up") && (
+      {/* Navbar only appears if not on sign-in or sign-up pages */}
+      {!(pathname === "/sign-in" || pathname === "/sign-up" || pathname.startsWith("/admin")) && (
         <div className="container mx-auto p-4 z-10">
           <Navbar routes={routes} />
         </div>
       )}
 
       <Routes>
-        {/* Redirect ke login jika belum autentikasi */}
+        {/* Redirect to login if not authenticated */}
         {!isAuthenticated && <Route path="*" element={<Navigate to="/sign-in" replace />} />}
 
-        {/* Route untuk Sign-In dan Sign-Up */}
+        {/* Routes for Sign-In and Sign-Up */}
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
 
+        {/* Admin routes */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="users" element={<ManageUsers />} />
+          <Route path="tournaments" element={<ManageTournaments />} />
+          <Route path="forum" element={<ForumDiscussions />} />
+          <Route path="replays" element={<ReplayManagement />} />
+        </Route>
 
-
-        {/* Routing untuk halaman utama dan detail */}
+        {/* Routes for main pages and details */}
         {routes.map(({ path, element }, key) => (
           <Route key={key} path={path} element={element} />
         ))}
 
-        {/* Route untuk halaman Tournament dan Detail Tournament */}
-        <Route path="/tournament" element={<Tournament />} /> {/* Daftar turnamen */}
+        {/* Routes for Tournament and Tournament Details */}
+        <Route path="/tournament" element={<Tournament />} />
         <Route path="profile" element={<Profile />} />
-        <Route path="/tournament/:id" element={<DetailTournament />} /> {/* Halaman detail berdasarkan ID */}
-        <Route path="/followed-tournament" element={<FollowedTournament />} /> {/* Turnamen diikuti */}
-        <Route path="/followed-tournament/:id" element={<DetailFollowedTournament />} /> {/* Detail turnamen diikuti */}
-        <Route path="/followed-tournament/:id/teams" element={<TeamList />} /> {/* List Team Tournament Yang diikuti */}
-        <Route path="/followed-tournament/:id/teams/:teamId" element={<TeamDetail />} /> {/* Detail Team Tournament Yang diikuti */}
+        <Route path="/tournament/:id" element={<DetailTournament />} />
+        <Route path="/followed-tournament" element={<FollowedTournament />} />
+        <Route path="/followed-tournament/:id" element={<DetailFollowedTournament />} />
+        <Route path="/followed-tournament/:id/teams" element={<TeamList />} />
+        <Route path="/followed-tournament/:id/teams/:teamId" element={<TeamDetail />} />
 
-        {/* Route untuk halaman pendaftaran */}
+        {/* Route for registration page */}
         <Route path="/tournament-registration/:id" element={<TournamentRegistration />} />
 
-        <Route path="/admin" element={<AdminDashboard />} />
-
-        {/* Route fallback jika tidak ditemukan */}
+        {/* Fallback route if not found */}
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
     </>
