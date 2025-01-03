@@ -116,10 +116,10 @@ Footer.defaultProps = {
     {
       name: "Anggota Team",
       items: [
-        { name: "Hegel Divastra - 1034", path: "#" },
-        { name: "Adi Andika - 1082", path: "#" },
-        { name: "Aditya pramana - 1076", path: "#" },
-        { name: "Meilan Kartika - 1067", path: "#" },
+        { name: "Hegel Divastra - 1034", path: "/followed-tournament" },
+        { name: "Adi Andika - 1082", path: "/chat-forum" },
+        { name: "Aditya pramana - 1076", path: "/tournament" },
+        { name: "Meilan Kartika - 1067", path: "/home" },
       ],
     },
   ],

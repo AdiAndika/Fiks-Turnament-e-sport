@@ -10,6 +10,7 @@ import {
 } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
+import { Footer } from "@/widgets/layout";
 import { getData } from "../../utils/api";
 import "./Match-replay.css";
 
@@ -74,8 +75,8 @@ const Playlist = () => {
       <Row gutter={[24, 0]} justify="center">
         <Col xs={22} className="playlist-col">
           <Card bordered={false} className="playlist-card">
-            <Title className="playlist-title">Playlist</Title>
-            <Text className="playlist-subtitle">List of playlists</Text>
+            <Title className="playlist-title">Match Replay</Title>
+            <Text className="playlist-subtitle">List of Match Replay</Text>
             <Divider className="playlist-divider" />
 
             <Input
@@ -143,6 +144,7 @@ const Playlist = () => {
           </Card>
         </Col>
       </Row>
+      <Footer />
     </div>
   );
 };

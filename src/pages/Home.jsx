@@ -7,7 +7,6 @@ import { Footer } from "@/widgets/layout";
 
 export function Home() {
   const [heroImage, setHeroImage] = useState(
-    "https://mmorpgturkiye.com/wp-content/uploads/2019/07/mmorpg-turkiye-tanitim-pubg-2.jpg"
   );
 
   const navigate = useNavigate(); // Deklarasi useNavigate
@@ -17,7 +16,8 @@ export function Home() {
       "https://mmorpgturkiye.com/wp-content/uploads/2019/07/mmorpg-turkiye-tanitim-pubg-2.jpg",
       "https://cdn.eraspace.com/pub/media/mageplaza/blog/post/e/z/ezgif-4-37d3658dbf.jpg",
       "https://example.com/another-image.jpg",
-      "https://en.esportsku.com/wp-content/uploads/2021/01/ff-a.jpg",
+      "https://asset.kompas.com/crops/hn148MyDct8HysLP8HnCh8JYGMU=/181x0:1796x1077/1200x800/data/photo/2022/06/20/62b03c6559ae8.jpg",
+      "https://images7.alphacoders.com/120/thumb-1920-1203245.jpg",
     ];
 
     const changeHeroImage = () => {
