@@ -1,0 +1,119 @@
+/* Container utama */
+.playlist-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 0;
+  font-family: 'Orbitron', sans-serif;
+  background: #00000e; /* Latar belakang gelap */
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Judul dan subtitel */
+.playlist-title {
+  font-size: 3em;
+  font-weight: bold;
+  color: #ffffff !important; 
+  text-shadow: 0 0 8px #00b4d8, 0 0 12px #00b4d8, 0 0 18px #00b4d8, 0 0 24px #00b4d8; /* Efek glowing biru */
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.playlist-subtitle {
+  font-size: 1.2em;
+  color: #ffffff;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Divider */
+.playlist-divider {
+  background-color: #00b4d8;
+  border: 1px solid #00b4d8;
+  margin-bottom: 20px;
+}
+
+/* Search Input Styling */
+.playlist-search {
+  margin-bottom: 20px;
+  background-color: #333; /* Latar belakang gelap untuk search bar */
+  color: #f0f0f5; /* Warna teks terang */
+  border: 1px solid #00b4d8; /* Border biru */
+  border-radius: 20px;
+  width: 300px; /* Lebar tetap */
+  padding-left: 15px;
+  font-size: 16px;
+  transition: width 0.3s ease, box-shadow 0.3s ease;
+  opacity: 1; /* Pastikan search bar tidak transparan */
+}
+
+.playlist-search::placeholder {
+  color: #aaaaaa; /* Warna placeholder abu-abu */
+  opacity: 1; /* Placeholder tidak transparan */
+}
+
+.playlist-search:focus {
+  background-color: #f0f0f5; /* Latar belakang terang saat fokus */
+  color: #000000; /* Ubah teks menjadi hitam saat fokus */
+  outline: none;
+  box-shadow: 0 0 10px #00b4d8; /* Bayangan biru terang saat fokus */
+}
+
+.playlist-search:focus::placeholder {
+  color: #cccccc; /* Warna placeholder lebih terang saat fokus */
+  opacity: 1;
+}
+
+/* Menghilangkan transparansi pada teks saat mengetik */
+.playlist-search:focus,
+.playlist-search {
+  color: #000000; /* Mengatur warna teks menjadi hitam saat mengetik */
+}
+
+/* Kartu playlist */
+.playlist-card {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  background-color: #00000e;
+  transition: box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.playlist-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+}
+
+/* Judul video */
+.playlist-card .ant-card-meta-title {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.6); /* Latar belakang semi-transparan hitam */
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+  z-index: 2;
+  text-align: center;
+}
+
+/* Video frame */
+.playlist-card iframe,
+.playlist-card video {
+  width: 100%;
+  border-radius: 8px;
+}
+
+/* No data */
+.playlist-container .ant-list-empty-text {
+  color: #ffffff;
+  font-size: 16px;
+}

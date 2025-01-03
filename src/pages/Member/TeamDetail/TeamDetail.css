@@ -1,0 +1,99 @@
+/* Main container for the team detail page */
+.team-detail-container {
+    padding: 20px;
+    background-color: #00000e;
+    color: #f0f0f5;
+    font-family: 'Orbitron', sans-serif;
+  }
+  
+  /* Header section */
+  .team-detail-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px;
+  }
+  
+  .team-detail-image {
+    width: 250px;
+    height: 250px;
+    border-radius: 10px;
+    object-fit: cover;
+    margin-right: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  }
+  
+  .team-detail-info {
+    color: #f0f0f5;
+  }
+  
+  .team-name-detail {
+    font-size: 3em;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 0 8px #00b4d8, 0 0 12px #00b4d8;
+  }
+  
+  .team-origin {
+    font-size: 1.2em;
+    margin-top: 10px;
+  }
+  
+  /* Members section */
+  .team-members {
+    margin-top: 20px;
+  }
+  
+  .members-title {
+    font-size: 2em;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 0 8px #00b4d8, 0 0 12px #00b4d8;
+  }
+  
+  .members-list {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 20px;
+  }
+  
+  .member-card {
+    display: flex;
+    align-items: center;
+    background-color: #000006;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  }
+  
+  .member-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 20px;
+  }
+  
+  .member-info {
+    display: flex;
+    flex-direction: column;
+    color: #f0f0f5;
+  }
+  
+  .member-name {
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+  
+  .member-id {
+    font-size: 1em;
+    margin-top: 5px;
+  }
+  
+  /* Background for large screens */
+  @media (min-width: 1024px) {
+    .team-detail-container {
+      padding: 40px;
+    }
+  }
+  

@@ -1,0 +1,124 @@
+/* Styling untuk section utama */
+.signin-section {
+    margin: 2rem;
+    display: flex;
+    gap: 1rem;
+}
+
+/* Styling untuk bagian form */
+.signin-form-container {
+    width: 100%;
+    max-width: 400px; /* Ubah ukuran maksimum sesuai kebutuhan */
+    margin: auto;
+    margin-top: 6rem;
+}
+
+.signin-heading {
+    text-align: center;
+}
+
+.signin-title {
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.signin-subtitle {
+    color: #4a5568; /* Warna abu-abu gelap */
+    font-size: 1rem;
+    margin-bottom: 2rem;
+}
+
+/* Styling untuk input */
+.signin-input {
+    border-top-color: #d1d5db;
+    border-radius: 0.375rem;
+    outline: none;
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.signin-input:focus {
+    border-top-color: #1f2937;
+}
+
+/* Styling untuk tombol */
+.signin-button {
+    margin-top: 1.5rem;
+    background-color: #1d4ed8;
+    color: white;
+    border-radius: 0.375rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.signin-button:hover {
+    background-color: #1e40af;
+}
+
+/* Styling untuk Google Login */
+.signin-google-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f3f4f6; /* Warna abu-abu terang */
+    color: #1f2937; /* Warna teks abu-abu gelap */
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.375rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    gap: 0.5rem; /* Jarak antara ikon dan teks */
+    transition: background-color 0.2s;
+}
+
+.signin-google-button:hover {
+    background-color: #e5e7eb; /* Warna hover */
+}
+
+.signin-google-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* Styling untuk elemen di bawah form */
+.signin-footer {
+    text-align: center;
+    margin-top: 1rem;
+    color: #4a5568;
+}
+
+.signin-create-account {
+    color: #1d4ed8;
+    text-decoration: none;
+}
+
+.signin-create-account:hover {
+    text-decoration: underline;
+}
+
+/* Styling untuk gambar di kanan */
+.signin-image-container {
+    display: none;
+    width: 40%;
+}
+
+.signin-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 1rem;
+}
+
+@media (min-width: 1024px) {
+    .signin-image-container {
+        display: block;
+    }
+}
+
+/* Tambahkan margin untuk form agar tidak terlalu dekat dengan tepi */
+.signin-form {
+    padding: 1rem;
+    border-radius: 0.375rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

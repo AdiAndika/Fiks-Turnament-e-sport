@@ -1,0 +1,126 @@
+/* Container utama */
+.chat-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Orbitron', sans-serif;
+  background: #00000e;
+  color: #f0f0f5;
+}
+
+/* Header */
+.chat-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.chat-title {
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #ffffff !important; /* Pastikan warna putih */
+  text-shadow: 0 0 8px #00b4d8, 0 0 12px #00b4d8;
+  margin-bottom: 20px;
+}
+
+
+.chat-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.chat-tab {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #0077b6, #00b4d8);
+  color: #ffffff;
+  font-size: 1em;
+  font-weight: bold;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.chat-tab.active {
+  background: linear-gradient(90deg, #00b4d8, #0077b6);
+  box-shadow: 0 4px 10px rgba(0, 180, 216, 0.3);
+}
+
+.chat-tab:hover {
+  transform: scale(1.05);
+}
+
+/* Chat List */
+.chat-list {
+  margin-top: 20px;
+}
+
+.chat-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 15px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  background-color: #000006;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.chat-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6), 0 0 12px #00b4d8;
+}
+
+.chat-card-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-bottom: 2px solid #00b4d8;
+}
+
+.chat-card-overlay {
+  padding: 20px;
+}
+
+.chat-card-title {
+  margin: 0;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 0 0 10px #00b4d8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.chat-card-button {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(90deg, #0077b6, #00b4d8);
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: background 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+}
+
+.chat-card-button:hover {
+  background: linear-gradient(90deg, #00b4d8, #0077b6);
+  transform: scale(1.05);
+}
+
+/* Footer */
+.chat-footer {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.chat-footer-link {
+  font-weight: bold;
+  color: #00b4d8;
+  text-decoration: none;
+}
+
+.chat-footer-link:hover {
+  text-decoration: underline;
+}
