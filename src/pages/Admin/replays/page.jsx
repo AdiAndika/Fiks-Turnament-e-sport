@@ -55,20 +55,20 @@ export default function ReplayManagement() {
           </p>
           <form className="custom-form">
             <div className="custom-form-group">
-              <label htmlFor="replayFile">Replay File</label>
-              <input type="file" id="replayFile" name="replayFile" className="custom-input" accept=".rep,.zip" />
+              <label htmlFor="title">Title</label>
+              <input type="text" id="title" name="title" className="custom-input" />
             </div>
             <div className="custom-form-group">
-              <label htmlFor="matchName">Match Name</label>
-              <input type="text" id="matchName" name="matchName" className="custom-input" />
+              <label htmlFor="description">Dseskripsi</label>
+              <input type="text" id="description" name="description" className="custom-input" />
             </div>
             <div className="custom-form-group">
-              <label htmlFor="tournament">Tournament</label>
-              <select id="tournament" name="tournament" className="custom-input">
-                <option value="">Select Tournament</option>
-                <option value="1">Summer Championship</option>
-                <option value="2">Fall Invitational</option>
-              </select>
+              <label htmlFor="urlVideo">URL Video</label>
+              <input type="text" id="urlVideo" name="urlVideo" className="custom-input" />
+            </div>
+            <div className="custom-form-group">
+              <label htmlFor="urlThumbnail">URL Thumbnail</label>
+              <input type="text" id="urlThumbnail" name="urlThumbnail" className="custom-input" />
             </div>
             <button type="submit" className="custom-button">Upload Replay</button>
           </form>
