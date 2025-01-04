@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Layout,
   Typography,
@@ -8,33 +8,107 @@ import {
   Modal,
   Form,
   Input,
-  Upload,
-  message,
+  notification,
 } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
-
+import { EditOutlined, DeleteOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import { getData, sendData, deleteData } from "@/utils/api";  // Pastikan path ini benar
 const { Content } = Layout;
 const { Title } = Typography;
 
 export default function ReplayManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
-  const [dataSource, setDataSource] = useState([
-    {
-      key: 1,
-      id: 1,
-      title: "Final: Player1 vs Player2",
-      videoUrl: "https://example.com/video1",
-      thumbnailUrl: "https://example.com/thumbnail1",
-    },
-    {
-      key: 2,
-      id: 2,
-      title: "Semi-Final: Player3 vs Player4",
-      videoUrl: "https://example.com/video2",
-      thumbnailUrl: "https://example.com/thumbnail2",
-    },
-  ]);
+  const [dataSource, setDataSource] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [idSelected, setIdSelected] = useState(null);
+  const [api, contextHolder] = notification.useNotification();
+
+  // Fetch replays data
+  useEffect(() => {
+    fetchReplays();
+  }, []);
+
+  const fetchReplays = () => {
+    setIsLoading(true);
+    getData("/api/playlist/17")  // Sesuaikan endpoint dengan API Anda
+      .then((resp) => {
+        setIsLoading(false);
+        if (resp?.datas && Array.isArray(resp.datas)) {
+          setDataSource(resp.datas);
+        } else {
+          showAlert("error", "Data Error", "Invalid data format received from server.");
+        }
+      })
+      .catch((err) => {
+        showAlert("error", "Fetch Error", "Unable to fetch data from server.");
+        setIsLoading(false);
+      });
+  };
+
+  const showAlert = (status, title, description) => {
+    api[status]({
+      message: title,
+      description: description,
+    });
+  };
+
+  // Handle edit functionality
+  const handleEdit = (record) => {
+    setIsEdit(true);
+    setIdSelected(record.id);
+    form.setFieldsValue({
+      id: record.id,
+      title: record.title,
+      videoUrl: record.videoUrl,
+      thumbnailUrl: record.thumbnailUrl,
+    });
+    setIsModalOpen(true);
+  };
+
+  // Handle delete functionality
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this replay?",
+      onOk: () => {
+        deleteData(`/api/playlist/17/${id}`, "DELETE")
+          .then(() => {
+            showAlert("success", "Deleted", "Replay deleted successfully");
+            fetchReplays();  // Refresh data after deletion
+          })
+          .catch((err) => {
+            showAlert("error", "Failed to delete replay", err.toString());
+          });
+      },
+    });
+  };
+
+  // Handle adding new replay
+  const handleAddNew = () => {
+    form.resetFields();
+    setIsEdit(false);
+    setIsModalOpen(true);
+  };
+
+  // Handle form submission (Create/Update)
+  const handleFinish = (values) => {
+    let requestUrl = isEdit ? `/api/playlist/17/${idSelected}/update` : "/api/playlist/17";  // Adjust URL for update or create
+    const requestMethod = isEdit ? "PUT" : "POST";  // Use PUT for update
+
+    sendData(requestUrl, values, requestMethod)
+      .then((resp) => {
+        if (resp?.datas) {
+          showAlert("success", "Success", "Replay saved successfully");
+          fetchReplays();  // Refresh data after save
+          setIsModalOpen(false);
+        } else {
+          showAlert("error", "Failed to save replay", "Could not save replay data");
+        }
+      })
+      .catch((err) => {
+        showAlert("error", "Failed to save replay", err.toString());
+      });
+  };
 
   const columns = [
     {
@@ -62,59 +136,21 @@ export default function ReplayManagement() {
       key: "actions",
       render: (_, record) => (
         <>
-          <Button type="link" onClick={() => handleEdit(record)}>Edit</Button>
-          <Button type="link" danger onClick={() => handleDelete(record.key)}>
-            Delete
+          <Button type="link" onClick={() => handleEdit(record)}>
+            <EditOutlined /> Edit
+          </Button>
+          <Button type="link" danger onClick={() => handleDelete(record.id)}>
+            <DeleteOutlined /> Delete
           </Button>
         </>
       ),
     },
   ];
 
-  const handleEdit = (record) => {
-    form.setFieldsValue(record);
-    setIsModalOpen(true);
-  };
-
-  const handleDelete = (key) => {
-    Modal.confirm({
-      title: "Are you sure you want to delete this replay?",
-      onOk: () => {
-        setDataSource(dataSource.filter((item) => item.key !== key));
-        message.success("Replay deleted successfully");
-      },
-      okButtonProps: {
-        style: { backgroundColor: "black", color: "white", borderColor: "black" },
-      },
-    });
-  };
-
-  const handleAddNew = () => {
-    form.resetFields();
-    setIsModalOpen(true);
-  };
-
-  const handleFinish = (values) => {
-    if (values.key) {
-      setDataSource(
-        dataSource.map((item) => (item.key === values.key ? { ...values } : item))
-      );
-      message.success("Replay updated successfully");
-    } else {
-      const newReplay = {
-        ...values,
-        key: dataSource.length + 1,
-        id: dataSource.length + 1,
-      };
-      setDataSource([...dataSource, newReplay]);
-      message.success("Replay added successfully");
-    }
-    setIsModalOpen(false);
-  };
-
   return (
     <Layout style={{ background: "transparent" }}>
       <Content style={{ padding: "20px" }}>
+        {contextHolder}
         <Title level={2} style={{ marginBottom: "20px", color: "white" }}>
           Replay Management
         </Title>
@@ -124,6 +160,7 @@ export default function ReplayManagement() {
           extra={
             <Button
               type="primary"
+              icon={<PlusCircleOutlined />}
               onClick={handleAddNew}
               style={{ backgroundColor: "black", color: "white", borderColor: "black" }}
             >
@@ -131,11 +168,17 @@ export default function ReplayManagement() {
             </Button>
           }
         >
-          <Table dataSource={dataSource} columns={columns} rowKey="key" />
+          <Table
+            dataSource={dataSource}
+            columns={columns}
+            rowKey="id"
+            loading={isLoading}
+            pagination={false}
+          />
         </Card>
 
         <Modal
-          title="Add / Edit Replay"
+          title={isEdit ? "Edit Replay" : "Add Replay"}
           visible={isModalOpen}
           onCancel={() => setIsModalOpen(false)}
           footer={null}
@@ -144,18 +187,15 @@ export default function ReplayManagement() {
             form={form}
             layout="vertical"
             onFinish={handleFinish}
-            initialValues={{ id: "", title: "", videoUrl: "", thumbnailUrl: "" }}
+            initialValues={{
+              id: "",
+              title: "",
+              videoUrl: "",
+              thumbnailUrl: "",
+            }}
           >
-            <Form.Item name="key" hidden>
-              <Input type="hidden" />
-            </Form.Item>
-
-            <Form.Item
-              label="ID"
-              name="id"
-              rules={[{ required: true, message: "Please enter the ID" }]}
-            >
-              <Input placeholder="Enter the replay ID" />
+            <Form.Item name="id" hidden>
+              <Input />
             </Form.Item>
 
             <Form.Item
