@@ -11,7 +11,7 @@ import {
   notification,
 } from "antd";
 import { EditOutlined, DeleteOutlined, PlusCircleOutlined } from "@ant-design/icons";
-import { getData, sendData, deleteData } from "@/utils/api";  // Pastikan path ini benar
+import { getData, sendData, deleteData } from "@/utils/api-playlist";  // Pastikan path ini benar
 const { Content } = Layout;
 const { Title } = Typography;
 

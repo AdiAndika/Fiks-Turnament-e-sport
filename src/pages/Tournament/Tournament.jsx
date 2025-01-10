@@ -1,14 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './TournamentList.css';
 import tournaments from './GameData';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { Footer } from '@/widgets/layout';
+import { getDataPrivate } from '@/utils/api';
 
 const Tournament = () => {
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+
+  const [tournaments, setTournaments] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+
+  useEffect(() => {
+    getTournaments();
+  }, []);
+
+  const getTournaments = () => {
+    setIsLoading(true);
+    getDataPrivate("/api/v1/tournaments/read")
+        .then((resp) => {
+            setIsLoading(false);
+            if (resp?.datas) {
+                setTournaments(resp?.datas);
+                console.log("tournament:", tournaments);
+            } else {
+                setErrMsg("Can't fetch data");
+            }
+        })
+        .catch((err) => {
+            setIsLoading(false);
+            setErrMsg("Data fetch failed");
+            console.log(err);
+        });
+  }
 
   const handleSearchClick = () => {
     setSearchVisible(true);
@@ -25,7 +53,7 @@ const Tournament = () => {
   };
 
   const filteredTournaments = tournaments.filter((tournament) =>
-    tournament.name.toLowerCase().includes(searchQuery.toLowerCase())
+    tournament.tournament_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -54,16 +82,16 @@ const Tournament = () => {
       <div className="tournament-list">
         {filteredTournaments.map((tournament) => (
           <div
-            key={tournament.id}
+            key={tournament.tournament_id}
             className="tournament-card"
-            onClick={() => navigate(`/tournament/${tournament.id}`)} // Navigasi ke halaman detail dengan ID tournament
+            onClick={() => navigate(`/tournament/${tournament.tournament_id}`)} // Navigasi ke halaman detail dengan ID tournament
           >
             <img
-              src={tournament.image}
-              alt={tournament.name}
+              src='https://wstatic-prod-boc.krafton.com/common/news/20230706/LGhhK1J2.jpg'//{tournament.tournament_name}
+              alt={tournament.tournament_name}
               className="tournament-image"
             />
-            <p className="tournament-name">{tournament.name}</p>
+            <p className="tournament-name">{tournament.tournament_name}</p>
           </div>
         ))}
       </div>

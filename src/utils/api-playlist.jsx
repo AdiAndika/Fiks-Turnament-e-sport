@@ -1,6 +1,6 @@
 import { jwtStorage } from "./jwt_storage";
 
-const REACT_APP_API_URL = import.meta.env.VITE_REACT_APP_API_URL;
+const REACT_APP_API_PLAYLIST_URL = import.meta.env.VITE_REACT_APP_API_PLAYLIST_URL;
 
 export const getDataPublic = (url) => {
   return fetch(url)
@@ -18,7 +18,7 @@ export const getDataPublic = (url) => {
 };
 
 export const getData = async (url) => {
-  return fetch(REACT_APP_API_URL + url)
+  return fetch(REACT_APP_API_PLAYLIST_URL + url)
     .then((response) =>
       response.status >= 200 &&
       response.status <= 299 &&
@@ -34,7 +34,7 @@ export const getData = async (url) => {
 
 export const getDataPrivate = async (url) => {
   let token = await jwtStorage.retrieveToken();
-  return fetch(REACT_APP_API_URL + url, {
+  return fetch(REACT_APP_API_PLAYLIST_URL + url, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -55,7 +55,7 @@ export const getDataPrivate = async (url) => {
 };
 
 export const sendData = async (url, data) => {
-  return fetch(REACT_APP_API_URL + url, {
+  return fetch(REACT_APP_API_PLAYLIST_URL + url, {
     method: "POST",
     body: data,
   })
@@ -89,7 +89,7 @@ export const sendDataPrivate = async (url, data) => {
   }
   console.log(options);
 
-  return fetch(REACT_APP_API_URL + url, options)
+  return fetch(REACT_APP_API_PLAYLIST_URL + url, options)
     .then((response) =>
       response.status === 401
         ? { isExpiredJWT: true }
@@ -104,7 +104,7 @@ export const sendDataPrivate = async (url, data) => {
 };
 
 export const deleteData = async (url, data) => {
-  return fetch(REACT_APP_API_URL + url, {
+  return fetch(REACT_APP_API_PLAYLIST_URL + url, {
     method: "DELETE",
     body: data,
   })
@@ -118,7 +118,7 @@ export const editDataPrivatePut = async (url, data) => {
   //204 -> No Content, but success
   //NOTE : You must special handle for HTTP status above
   let token = await jwtStorage.retrieveToken();
-  return fetch(REACT_APP_API_URL + url, {
+  return fetch(REACT_APP_API_PLAYLIST_URL + url, {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -146,7 +146,7 @@ export const editDataPrivateURLEncoded = async (url, data) => {
   //NOTE : You must special handle for HTTP status above
   // var token = localStorage.getItem("token_auth");
   let token = await jwtStorage.retrieveToken();
-  return fetch(REACT_APP_API_URL + url, {
+  return fetch(REACT_APP_API_PLAYLIST_URL + url, {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -174,7 +174,7 @@ export const deleteDataPrivate = async (url, data) => {
   //NOTE : You must special handle for HTTP status above
   // var token = localStorage.getItem("token_auth");
   let token = await jwtStorage.retrieveToken();
-  return fetch(REACT_APP_API_URL + url, {
+  return fetch(REACT_APP_API_PLAYLIST_URL + url, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`
@@ -201,7 +201,7 @@ export const deleteDataPrivateURLEncoded = async (url, data) => {
   //NOTE : You must special handle for HTTP status above
   // var token = localStorage.getItem("token_auth");
   let token = await jwtStorage.retrieveToken();
-  return fetch(REACT_APP_API_URL + url, {
+  return fetch(REACT_APP_API_PLAYLIST_URL + url, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -229,7 +229,7 @@ export const deleteDataPrivateJSON = async (url, data) => {
   //NOTE : You must special handle for HTTP status above
   // var token = localStorage.getItem("token_auth");
   let token = await jwtStorage.retrieveToken();
-  return fetch(REACT_APP_API_URL + url, {
+  return fetch(REACT_APP_API_PLAYLIST_URL + url, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -254,7 +254,7 @@ export const logoutAPI = async () => {
   let token = await jwtStorage.retrieveToken();
   let formData = new FormData();
   formData.append("logout", "Logout"); // Assuming jwtStorage retrieves token
-  return fetch(REACT_APP_API_URL + "/api/auth/logout", {
+  return fetch(REACT_APP_API_PLAYLIST_URL + "/api/auth/logout", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -280,5 +280,5 @@ export const logoutAPI = async () => {
 export const getImage = (url_image) => {
   const imgDefault = "/storage/images/userpng_1717846018.png";
   let imgResult = url_image ? url_image : imgDefault;
-  return REACT_APP_API_URL + '/static/' + imgResult;
+  return REACT_APP_API_PLAYLIST_URL + '/static/' + imgResult;
 };

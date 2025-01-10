@@ -62,6 +62,13 @@
   margin: 5px 0;
 }
 
+.button-container {
+  display: flex;
+  flex-direction: column; /* Stack buttons vertically */
+  align-items: center; /* Optional, center aligns buttons horizontally */
+  gap: 20px; /* Adds vertical space between buttons */
+}
+
 .register-button {
   padding: 12px 24px;
   font-size: 1.1em;
@@ -79,12 +86,69 @@
   right: 30px;
 }
 
+.register-button.disabled-button {
+  background-color: grey;
+  cursor: not-allowed;
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(200, 242, 251, 0.4), 0 0 10px rgba(147, 189, 198, 0.6);
+}
+
+/* Follow button style */
+.follow-button {
+  padding: 12px 24px;
+  font-size: 1.1em;
+  color: rgb(41, 36, 36);
+  background-color: #e3e3e3; /* Grey color for the follow button */
+  border: none;
+  border-radius: 8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 8px rgba(227, 227, 227, 0.4), 0 0 10px rgba(227, 227, 227, 0.6);
+}
+
+.see-registered-team-button {
+  padding: 12px 24px;
+  font-size: 1.1em;
+  color: rgb(41, 36, 36);
+  background-color: #e3e3e3; /* Grey color for the follow button */
+  border: none;
+  border-radius: 8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 8px rgba(227, 227, 227, 0.4), 0 0 10px rgba(227, 227, 227, 0.6);
+}
+
 .register-button:hover {
   background-color: #007ba7;
   transform: translateY(-3px);
 }
 
+.register-button.disabled-button:hover {
+  background-color: grey;
+  transform: translateY(-3px);
+}
+
+.follow-button:hover {
+  background-color: #d0b923;
+  transform: translateY(-3px);
+}
+
+.see-registered-team-button:hover {
+  background-color: #237ad0;
+  transform: translateY(-3px);
+}
+
 .register-button:active {
+  transform: translateY(0);
+}
+
+.follow-button:active {
+  transform: translateY(0);
+}
+
+.see-registered-team-button:active {
   transform: translateY(0);
 }
 

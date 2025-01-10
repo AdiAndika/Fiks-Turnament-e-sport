@@ -11,7 +11,7 @@ import {
 import { SearchOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { Footer } from "@/widgets/layout";
-import { getData } from "../../utils/api";
+import { getData } from "../../utils/api-playlist";
 import "./Match-replay.css";
 
 const { Title, Text } = Typography;

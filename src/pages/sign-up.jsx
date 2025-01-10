@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState} from "react";
 import {
   Input,
   Checkbox,
@@ -9,24 +9,47 @@ import { Link, useNavigate } from "react-router-dom";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import './signup.css';
 
+import { sendData } from "@/utils/api";
+// import { useContext, useState } from "react";
+
 export function SignUp() {
   const navigate = useNavigate();
 
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
   // Fungsi untuk registrasi
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    const isRegistered = true; // Simulasi registrasi berhasil
-    if (isRegistered) {
-      navigate("/sign-in");
-    } else {
-      alert("Registration failed!");
-    }
+    
+    let formData = new FormData();
+    formData.append("name", name);
+    formData.append("username", username);
+    formData.append("password", password);
+    console.log(formData);
+    console.log(username);
+
+    sendData("/api/v1/auth/register", formData)
+    .then((resp) => {
+      if (resp.message === "OK") {
+        alert("Akun berhasil dibuat, silakan login terlebih dahulu");
+        navigate("/sign-in");
+      } else {
+        console.error("Response data:", data.message);
+        alert("Something went wrong. Please try again.");
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      alert("There was an error creating the team.");
+    });
   };
 
   // Fungsi untuk login dengan Google
   const handleGoogleSuccess = (response) => {
     console.log("Google login success:", response);
-    navigate("/home"); // Navigasi ke halaman Home setelah login berhasil
+    navigate("/sign-in"); // Navigasi ke halaman Home setelah login berhasil
   };
 
   const handleGoogleError = (error) => {
@@ -54,9 +77,34 @@ export function SignUp() {
               <Typography variant="small" color="blue-gray" className="signup-label">Your email</Typography>
               <Input
                 size="lg"
-                placeholder="Enter your email"
+                placeholder="Enter your name"
                 className="signup-input"
                 labelProps={{ className: "signup-label-props" }}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your name!",
+                  },
+                ]}
+              />
+            </div>
+            <div className="signup-input-group">
+              <Typography variant="small" color="blue-gray" className="signup-label">Your email</Typography>
+              <Input
+                size="lg"
+                placeholder="Enter your username"
+                className="signup-input"
+                labelProps={{ className: "signup-label-props" }}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your username!",
+                  },
+                ]}
               />
             </div>
             <div className="signup-input-group">
@@ -67,6 +115,14 @@ export function SignUp() {
                 placeholder="Enter your password"
                 className="signup-input"
                 labelProps={{ className: "signup-label-props" }}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your password!",
+                  },
+                ]}
               />
             </div>
             <Checkbox
@@ -87,7 +143,12 @@ export function SignUp() {
               }
               containerProps={{ className: "signup-checkbox-container" }}
             />
-            <Button type="submit" className="signup-button" fullWidth>
+            <Button 
+              type="submit" 
+              className="signup-button" 
+              fullWidth
+              disabled={!username || !password}
+            >
               Register Now
             </Button>
             <div className="signup-third-party">

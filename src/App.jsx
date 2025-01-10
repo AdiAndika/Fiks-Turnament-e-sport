@@ -10,13 +10,17 @@ import TeamList from "./pages/Member/TeamList/TeamList";
 import TeamDetail from "./pages/Member/TeamDetail/TeamDetail";
 import SignIn from "./pages/sign-in";
 import SignUp from "./pages/sign-up";
-import { Profile } from "./pages";
+import { Home, Profile, ProfileEdit } from "./pages";
 import AdminLayout from "./pages/Admin/layout";
 import AdminDashboard from "./pages/Admin/page";
 import ManageUsers from "./pages/Admin/users/page";
 import ManageTournaments from "./pages/Admin/tournaments/page";
 import ForumDiscussions from "./pages/Admin/forum/page";
 import ReplayManagement from "./pages/Admin/replays/page";
+import ChatForumLandingPage from "./pages/Chat Forum/Chat-forum";
+import Playlist from "./pages/Match-replay/Match-replay";
+import AuthProvider from "./providers/AuthProvider";
+import PrivateRoute from "./components/layout/PrivateRoute";
 
 function App() {
   const { pathname } = useLocation();
@@ -30,44 +34,64 @@ function App() {
           <Navbar routes={routes} />
         </div>
       )}
+    <AuthProvider>
+        <Routes>
+          {/* Redirect to login if not authenticated */}
+          {!isAuthenticated && <Route path="*" element={<Navigate to="/sign-in" replace />} />}
 
-      <Routes>
-        {/* Redirect to login if not authenticated */}
-        {!isAuthenticated && <Route path="*" element={<Navigate to="/sign-in" replace />} />}
+          {/* Routes for Sign-In and Sign-Up */}
+          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/sign-up" element={<SignUp />} />
 
-        {/* Routes for Sign-In and Sign-Up */}
-        <Route path="/sign-in" element={<SignIn />} />
-        <Route path="/sign-up" element={<SignUp />} />
+          {/* Admin routes */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="users" element={<ManageUsers />} />
+            <Route path="tournaments" element={<ManageTournaments />} />
+            <Route path="forum" element={<ForumDiscussions />} />
+            <Route path="replays" element={<ReplayManagement />} />
+          </Route>
 
-        {/* Admin routes */}
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="users" element={<ManageUsers />} />
-          <Route path="tournaments" element={<ManageTournaments />} />
-          <Route path="forum" element={<ForumDiscussions />} />
-          <Route path="replays" element={<ReplayManagement />} />
-        </Route>
+          {/* Routes for main pages and details
+          {routes.map(({ path, element }, key) => (
+            <Route 
+            key={key} 
+            path={path} 
+            element={<PrivateRoute component={element}/>} 
+            />
+          ))} */}
 
-        {/* Routes for main pages and details */}
-        {routes.map(({ path, element }, key) => (
-          <Route key={key} path={path} element={element} />
-        ))}
+          {/* Normal route */}
+          <Route 
+            path="/home" 
+            element={<PrivateRoute component={<Home />}/>}  
+          />
+          <Route 
+            path="/chat-forum" 
+            element={<PrivateRoute component={<ChatForumLandingPage />}/>}
+          />
+          <Route 
+            path="/playlist" 
+            element={<Playlist />} 
+          />
 
-        {/* Routes for Tournament and Tournament Details */}
-        <Route path="/tournament" element={<Tournament />} />
-        <Route path="profile" element={<Profile />} />
-        <Route path="/tournament/:id" element={<DetailTournament />} />
-        <Route path="/followed-tournament" element={<FollowedTournament />} />
-        <Route path="/followed-tournament/:id" element={<DetailFollowedTournament />} />
-        <Route path="/followed-tournament/:id/teams" element={<TeamList />} />
-        <Route path="/followed-tournament/:id/teams/:teamId" element={<TeamDetail />} />
+          {/* Routes for Tournament and Tournament Details */}
+          <Route exact path="/tournament" element={<Tournament />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/edit" element={<ProfileEdit />} />
+          <Route exact path="/tournament/:id" element={<DetailTournament />} />
+          <Route path="/followed-tournament" element={<FollowedTournament />} />
+          <Route path="/followed-tournament/:id" element={<DetailFollowedTournament />} />
+          <Route path="/followed-tournament/:id/teams" element={<TeamList />} />
+          <Route path="/followed-tournament/:id/teams/:teamId" element={<TeamDetail />} />
 
-        {/* Route for registration page */}
-        <Route path="/tournament-registration/:id" element={<TournamentRegistration />} />
+          {/* Route for registration page */}
+          <Route path="/tournament-registration/:id" element={<TournamentRegistration />} />
 
-        {/* Fallback route if not found */}
-        <Route path="*" element={<Navigate to="/home" replace />} />
-      </Routes>
+          {/* Fallback route if not found */}
+          <Route path="*" element={<Navigate to="/home" replace />} />
+        </Routes>
+    </AuthProvider>
     </>
   );
 }

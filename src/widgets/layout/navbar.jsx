@@ -1,3 +1,4 @@
+//import { React, useContext, useState } from "react";
 import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
@@ -9,6 +10,8 @@ import {
   IconButton,
 } from "@material-tailwind/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { AuthContext } from "@/providers/AuthProvider";
+
 
 export function Navbar({ brandName, routes, action }) {
   const [openNav, setOpenNav] = React.useState(false);
@@ -116,11 +119,9 @@ export function Navbar({ brandName, routes, action }) {
 Navbar.defaultProps = {
   brandName: "Ginger E-Sport",
   action: (
-    <Link to="/sign-in">
-      <Button variant="gradient" size="sm" fullWidth>
+      <Button variant="gradient" size="sm" fullWidth onClick={() => logout()}>
         Log Out
       </Button>
-    </Link>
   ),
 };
 

@@ -1,25 +1,77 @@
 import { Avatar, Typography, Button } from "@material-tailwind/react";
 import {
-  MapPinIcon,
-  BriefcaseIcon,
-  BuildingLibraryIcon,
   PencilIcon,
 } from "@heroicons/react/24/solid";
 import { Footer } from "@/widgets/layout";
-import "./Profile.css"; // Import file CSS terpisah
+import React, { useState, useEffect, useContext } from "react";
+import { getImage, sendDataPrivate } from "@/utils/api";
+import { AuthContext } from "@/providers/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 export function Profile() {
+  const { userProfile } = useContext(AuthContext); // Pastikan AuthContext diatur dengan benar
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errMsg, setErrMsg] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (userProfile?.user_logged) {
+      getUser(userProfile.user_logged);
+    } else {
+      setIsLoading(false); // Jika userProfile tidak tersedia, langsung set loading ke false
+    }
+  }, [userProfile]);
+
+  const getUser = async (username) => {
+    const formData = new FormData();
+    formData.append("username", username);
+
+    try {
+      const resp = await sendDataPrivate("/api/v1/users/read/byUsername", formData);
+      if (resp?.datas) {
+        setUser(resp.datas);
+      } else {
+        setErrMsg("Data pengguna tidak ditemukan.");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      setErrMsg("Gagal mengambil data.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEditClick = () => {
+    navigate(`/profile/edit`);
+  };
+
+  let userAvatar = user?.image_url ? getImage(user.image_url) : "/img/default-avatar.png";
+
+  if (isLoading) {
+    return (
+      <div className="loading-spinner">
+        <Typography>Loading...</Typography>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="error-message">
+        <Typography variant="h4" color="red">
+          {errMsg || "Data tidak tersedia."}
+        </Typography>
+      </div>
+    );
+  }
+
   return (
     <>
-      {/* Banner section */}
-      <section className="profile-banner">
-        {/* Banner hanya menampilkan gambar latar belakang */}
-      </section>
+      <section className="profile-banner"></section>
 
-      {/* Profile content */}
       <section className="profile-content">
         <div className="profile-card">
-          {/* Teks "Welcome to Your Profile" di dalam card */}
           <Typography
             variant="h2"
             className="profile-banner-title text-center text-white"
@@ -29,20 +81,19 @@ export function Profile() {
 
           <div className="profile-header">
             <Avatar
-              src="/img/team-5.png"
+              src={userAvatar}
               alt="Profile picture"
               variant="circular"
               className="profile-avatar"
             />
             <div className="profile-info">
-              <Typography variant="h4" className="profile-name">
-                Jenna Stones
+              <Typography variant="h3" className="profile-name">
+                {user.name}
               </Typography>
-              <Typography className="profile-email">jena@mail.com</Typography>
+              <Typography className="profile-email">{user.username}</Typography>
             </div>
           </div>
 
-          {/* Stats */}
           <div className="profile-stats">
             <div className="stat-item">
               <Typography className="stat-value">22</Typography>
@@ -58,23 +109,6 @@ export function Profile() {
             </div>
           </div>
 
-          {/* Details */}
-          <div className="profile-details">
-            <div className="detail-item">
-              <MapPinIcon className="detail-icon" />
-              <Typography>Los Angeles, California</Typography>
-            </div>
-            <div className="detail-item">
-              <BriefcaseIcon className="detail-icon" />
-              <Typography>Solution Manager - Creative Tim Officer</Typography>
-            </div>
-            <div className="detail-item">
-              <BuildingLibraryIcon className="detail-icon" />
-              <Typography>University of Computer Science</Typography>
-            </div>
-          </div>
-
-          {/* Bio */}
           <div className="profile-bio">
             <Typography>
               An artist of considerable range, Jenna the name taken by
@@ -82,21 +116,20 @@ export function Profile() {
               records all of his own music, giving it a warm, intimate feel with
               a solid groove structure.
             </Typography>
-            <Button variant="gradient" className="profile-btn">
-              Show More
-            </Button>
           </div>
 
-          {/* Edit Profile Button */}
           <div className="edit-profile">
-            <Button variant="gradient" className="edit-profile-btn">
+            <Button 
+              variant="gradient" 
+              className="edit-profile-btn"
+              onClick={handleEditClick}
+            >
               <PencilIcon className="h-5 w-5 inline-block mr-2" /> Edit Profile
             </Button>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
       <Footer />
     </>
   );

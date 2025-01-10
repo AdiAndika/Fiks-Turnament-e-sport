@@ -1,6 +1,6 @@
 const TeamData = [
     {
-      tournamentId: 1,
+      tournamentId: 2,
       teams: [
         {
           id: 1,

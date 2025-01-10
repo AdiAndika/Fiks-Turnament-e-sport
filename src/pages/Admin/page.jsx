@@ -1,19 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Layout, Row, Col, Card, Typography, Button } from "antd";
+import { getDataPrivate } from "@/utils/api";
 
 const { Title } = Typography;
 const { Content } = Layout;
 
 export default function AdminDashboard() {
   // Simulasi data dari halaman lainnya yang telah diedit
-  const [users, setUsers] = useState([
-    { id: 1, username: "user1", email: "user1@example.com" },
-    { id: 2, username: "user2", email: "user2@example.com" },
-  ]);
-  const [tournaments, setTournaments] = useState([
-    { id: 1, name: "Summer Championship", startDate: "2023-06-01", endDate: "2023-06-30" },
-    { id: 2, name: "Fall Invitational", startDate: "2023-09-15", endDate: "2023-09-30" },
-  ]);
+  const [users, setUsers] = useState([]);
+  const [tournaments, setTournaments] = useState([]);
   const [forums, setForums] = useState([
     { id: 1, title: "Tournament Rules Discussion", posts: 10 },
     { id: 2, title: "General Gaming Discussion", posts: 25 },
@@ -22,6 +17,71 @@ export default function AdminDashboard() {
     { id: 1, tournament: "Summer Championship", videoUrl: "https://example.com/replay1" },
     { id: 2, tournament: "Fall Invitational", videoUrl: "https://example.com/replay2" },
   ]);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+
+  useEffect(() => {
+    getUsers();
+    getTournaments();
+  }, []);
+
+  const getUsers = () => {
+    setIsLoading(true);
+    getDataPrivate("/api/v1/users/read")
+        .then((resp) => {
+            setIsLoading(false);
+            if (resp?.datas) {
+                setUsers(resp?.datas);
+                console.log("users:", users);
+            } else {
+                setErrMsg("Can't fetch data");
+            }
+        })
+        .catch((err) => {
+            setIsLoading(false);
+            setErrMsg("Data fetch failed");
+            console.log(err);
+        });
+  };
+
+  const getTournaments = () => {
+    setIsLoading(true);
+    getDataPrivate("/api/v1/tournaments/read")
+        .then((resp) => {
+            setIsLoading(false);
+            if (resp?.datas) {
+                setTournaments(resp?.datas);
+                console.log("tournaments:", tournaments);
+            } else {
+                setErrMsg("Can't fetch data");
+            }
+        })
+        .catch((err) => {
+            setIsLoading(false);
+            setErrMsg("Data fetch failed");
+            console.log(err);
+        });
+  };
+
+  const gets = () => {
+    setIsLoading(true);
+    getDataPrivate("/api/v1/tournaments/read")
+        .then((resp) => {
+            setIsLoading(false);
+            if (resp?.datas) {
+                setTournaments(resp?.datas);
+                console.log("tournaments:", tournaments);
+            } else {
+                setErrMsg("Can't fetch data");
+            }
+        })
+        .catch((err) => {
+            setIsLoading(false);
+            setErrMsg("Data fetch failed");
+            console.log(err);
+        });
+  };
 
   return (
     <Layout style={{ background: "transparent", minHeight: "100vh" }}>
@@ -44,7 +104,7 @@ export default function AdminDashboard() {
               ) : (
                 <ul>
                   {users.map((user) => (
-                    <li key={user.id}>{user.username} ({user.email})</li>
+                    <li key={user.id}>{user.username}</li>
                   ))}
                 </ul>
               )}
@@ -64,7 +124,7 @@ export default function AdminDashboard() {
               ) : (
                 <ul>
                   {tournaments.map((tournament) => (
-                    <li key={tournament.id}>{tournament.name} ({tournament.startDate} - {tournament.endDate})</li>
+                    <li key={tournament.tournament_id}>{tournament.tournament_name} ({tournament.date_start} - {tournament.date_end})</li>
                   ))}
                 </ul>
               )}
