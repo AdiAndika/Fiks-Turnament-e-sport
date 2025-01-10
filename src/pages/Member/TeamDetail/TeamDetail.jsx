@@ -56,7 +56,7 @@ const getTeamDetail = () => {
             teamDetail.members.map((member, index) => (
               <li key={member.member_id} className="member-card">
                 <img
-                  src={member.imageUrl || "/default-avatar.png"} // Fallback for image
+                  src={getImage(member.member_avatar)} // Fallback for image
                   alt={member.special_nickname || member.user.username}
                   className="member-image"
                 />

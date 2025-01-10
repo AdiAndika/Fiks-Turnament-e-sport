@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Layout,
   Typography,
@@ -8,8 +8,18 @@ import {
   Modal,
   Form,
   Input,
+  Upload,
   message,
 } from "antd";
+import {
+  UploadOutlined
+} from "@ant-design/icons";
+import {
+  getDataPrivate,
+  sendDataPrivate,
+  editDataPrivatePut,
+  deleteDataPrivate
+} from "@/utils/api";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -17,28 +27,94 @@ const { Title } = Typography;
 export default function ForumDiscussions() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
-  const [dataSource, setDataSource] = useState([
-    {
-      key: 1,
-      id: 1,
-      title: "Tournament Strategies",
-      imageLink: "https://example.com/image1.jpg",
-      pathLink: "https://example.com/forum1",
-    },
-    {
-      key: 2,
-      id: 2,
-      title: "New Player Introduction",
-      imageLink: "https://example.com/image2.jpg",
-      pathLink: "https://example.com/forum2",
-    },
-  ]);
+  const [dataSource, setDataSource] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [fileList, setFileList] = useState([]);
+  const [editingKey, setEditingKey] = useState(null);
+
+  // Fetch data from API
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const res = await getDataPrivate("/api/v1/forums/admin/read");
+      if (res.message === "OK") {
+        setDataSource(res.datas);
+      } else {
+        message.error("Failed to fetch data");
+      }
+    } catch (err) {
+      message.error("An error occurred while fetching data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Add or Edit Forum
+  const handleFinish = async (values) => {
+    const formData = new FormData();
+    formData.append("title", values.title);
+    formData.append("forum_url", values.forum_url);
+    if (fileList.length > 0) {
+      formData.append("forum_image_path", fileList[0].originFileObj);
+    }
+
+    try {
+      let res;
+      if (editingKey) {
+        res = await editDataPrivatePut(`/api/v1/forums/admin/update/${editingKey}`, formData);
+      } else {
+        res = await sendDataPrivate("/api/v1/forums/admin/create", formData);
+      }
+
+      if (res.message === "Inserted" || res.message === "updated") {
+        message.success("Forum saved successfully");
+        fetchData();
+        setIsModalOpen(false);
+        setFileList([]);
+      } else {
+        message.error("Failed to save forum");
+      }
+    } catch (err) {
+      message.error("An error occurred while saving data");
+    }
+  };
+
+  // Delete Forum
+  const handleDelete = async (forumId) => {
+    try {
+      await deleteDataPrivate(`/api/v1/forums/admin/delete/${forumId}`);
+      message.success("Forum deleted successfully");
+      fetchData();
+    } catch (err) {
+      message.error("An error occurred while deleting the forum");
+    }
+  };
+
+  const handleEdit = (record) => {
+    form.setFieldsValue({
+      title: record.title,
+      forum_url: record.forum_url,
+    });
+    setFileList([]);
+    setEditingKey(record.forum_id);
+    setIsModalOpen(true);
+  };
+
+  const handleAddNew = () => {
+    form.resetFields();
+    setEditingKey(null);
+    setIsModalOpen(true);
+  };
 
   const columns = [
     {
       title: "ID",
-      dataIndex: "id",
-      key: "id",
+      dataIndex: "forum_id",
+      key: "forum_id",
     },
     {
       title: "Title",
@@ -46,14 +122,28 @@ export default function ForumDiscussions() {
       key: "title",
     },
     {
-      title: "Image Link",
-      dataIndex: "imageLink",
-      key: "imageLink",
+      title: "Image",
+      dataIndex: "forum_image_path",
+      key: "forum_image_path",
+      render: (text) => (
+        text ? <img src={`http://127.0.0.1:5000/static/${text}`} alt="forum" width={50} /> : "No Image"
+      ),
     },
     {
-      title: "Path Link",
-      dataIndex: "pathLink",
-      key: "pathLink",
+      title: "Link",
+      dataIndex: "forum_url",
+      key: "forum_url",
+      render: (text) => {
+        const validUrl = text.startsWith("http://") || text.startsWith("https://") 
+          ? text 
+          : `http://${text}`;
+        
+        return (
+          <a href={validUrl} target="_blank" rel="noopener noreferrer">
+            Visit
+          </a>
+        );
+      },
     },
     {
       title: "Actions",
@@ -61,80 +151,37 @@ export default function ForumDiscussions() {
       render: (_, record) => (
         <>
           <Button type="link" onClick={() => handleEdit(record)}>Edit</Button>
-          <Button type="link" danger onClick={() => handleDelete(record.key)}>
-            Delete
-          </Button>
+          <Button type="link" danger onClick={() => handleDelete(record.forum_id)}>Delete</Button>
         </>
       ),
     },
   ];
 
-  const handleEdit = (record) => {
-    form.setFieldsValue(record);
-    setIsModalOpen(true);
-  };
-
-  const handleDelete = (key) => {
-    Modal.confirm({
-      title: "Are you sure you want to delete this forum?",
-      onOk: () => {
-        setDataSource(dataSource.filter((item) => item.key !== key));
-        message.success("Forum deleted successfully");
-      },
-      okButtonProps: {
-        style: { backgroundColor: "black", color: "white", borderColor: "black" },
-      },
-    });
-  };
-
-  const handleAddNew = () => {
-    form.resetFields();
-    setIsModalOpen(true);
-  };
-
-  const handleFinish = (values) => {
-    if (values.key) {
-      // Edit existing forum
-      setDataSource(
-        dataSource.map((item) => (item.key === values.key ? { ...values } : item))
-      );
-      message.success("Forum updated successfully");
-    } else {
-      // Add new forum
-      const newForum = {
-        ...values,
-        key: dataSource.length + 1,
-        id: dataSource.length + 1,
-      };
-      setDataSource([...dataSource, newForum]);
-      message.success("Forum added successfully");
-    }
-    setIsModalOpen(false);
-  };
-
   return (
     <Layout style={{ background: "transparent" }}>
       <Content style={{ padding: "20px" }}>
-        <Title level={2} style={{ marginBottom: "20px", color: "white" }}>
+        <Title level={2} style={{ marginBottom: "20px" }}>
           Forum Discussions
         </Title>
 
         <Card
           title="Recent Threads"
           extra={
-            <Button 
-              type="primary" 
-              onClick={handleAddNew}
-              style={{ backgroundColor: 'black', color: 'white', borderColor: 'black' }}
-            >
+            <Button type="primary" onClick={handleAddNew}>
               Add Forum
-            </Button>}
+            </Button>
+          }
         >
-          <Table dataSource={dataSource} columns={columns} rowKey="key" />
+          <Table
+            dataSource={dataSource}
+            columns={columns}
+            rowKey="forum_id"
+            loading={loading}
+          />
         </Card>
 
         <Modal
-          title="Add / Edit Forum"
+          title={editingKey ? "Edit Forum" : "Add Forum"}
           visible={isModalOpen}
           onCancel={() => setIsModalOpen(false)}
           footer={null}
@@ -143,50 +190,37 @@ export default function ForumDiscussions() {
             form={form}
             layout="vertical"
             onFinish={handleFinish}
-            initialValues={{ id: "", title: "", imageLink: "", pathLink: "" }}
           >
-            <Form.Item name="key" hidden>
-              <Input type="hidden" />
-            </Form.Item>
-
-            <Form.Item
-              label="ID"
-              name="id"
-              rules={[{ required: true, message: "Please enter the ID" }]}
-            >
-              <Input placeholder="Enter the forum ID" />
-            </Form.Item>
-
             <Form.Item
               label="Title"
               name="title"
-              rules={[{ required: true, message: "Please enter the title" }]}
+              rules={[{ required: true, message: "Please enter the forum title" }]}
             >
               <Input placeholder="Enter the forum title" />
             </Form.Item>
 
             <Form.Item
-              label="Image Link"
-              name="imageLink"
-              rules={[{ required: true, message: "Please enter the image link" }]}
+              label="Forum URL"
+              name="forum_url"
+              rules={[{ required: true, message: "Please enter the forum URL" }]}
             >
-              <Input placeholder="Enter the image link" />
+              <Input placeholder="Enter the forum URL" />
             </Form.Item>
 
-            <Form.Item
-              label="Path Link"
-              name="pathLink"
-              rules={[{ required: true, message: "Please enter the path link" }]}
-            >
-              <Input placeholder="Enter the path link" />
+            <Form.Item label="Forum Image">
+              <Upload
+                beforeUpload={() => false}
+                fileList={fileList}
+                onChange={(info) => setFileList(info.fileList)}
+                listType="picture"
+                accept=".jpg,.jpeg,.png"
+              >
+                <Button icon={<UploadOutlined />}>Upload Image</Button>
+              </Upload>
             </Form.Item>
 
             <Form.Item>
-              <Button 
-                type="primary" 
-                htmlType="submit"
-                style={{ backgroundColor: 'black', color: 'white', borderColor: 'black' }}
-              >
+              <Button type="primary" htmlType="submit">
                 Submit
               </Button>
             </Form.Item>

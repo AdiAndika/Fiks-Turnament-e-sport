@@ -37,7 +37,7 @@ export default function ManageTournaments() {
     { title: "End Date", dataIndex: "date_end", key: "date_end" },
     { title: "Start Time", dataIndex: "time_start", key: "time_start" },
     { title: "End Time", dataIndex: "time_end", key: "time_end" },
-    { title: "Banner", dataIndex: "tournament_banner_path", key: "tournament_banner_path", render: (text) => text ? <img src={text} alt="Banner" style={{ width: "100px" }} /> : "-" },
+    { title: "Banner", dataIndex: "tournament_banner_path", key: "tournament_banner_path", render: (text) => text ? <img src={`http://127.0.0.1:5000/static/${text}`} alt="Banner" style={{ width: "100px" }} /> : "-" },
     {
       title: "Actions",
       key: "actions",

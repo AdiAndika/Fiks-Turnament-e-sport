@@ -21,6 +21,7 @@ import ChatForumLandingPage from "./pages/Chat Forum/Chat-forum";
 import Playlist from "./pages/Match-replay/Match-replay";
 import AuthProvider from "./providers/AuthProvider";
 import PrivateRoute from "./components/layout/PrivateRoute";
+import PrivateRouteAdmin from "./components/layout/PrivateRouteAdmin";
 
 function App() {
   const { pathname } = useLocation();
@@ -44,12 +45,25 @@ function App() {
           <Route path="/sign-up" element={<SignUp />} />
 
           {/* Admin routes */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="users" element={<ManageUsers />} />
-            <Route path="tournaments" element={<ManageTournaments />} />
-            <Route path="forum" element={<ForumDiscussions />} />
-            <Route path="replays" element={<ReplayManagement />} />
+          <Route 
+            path="/admin" 
+            element={<PrivateRouteAdmin component={<AdminLayout />} />}
+          >
+            <Route 
+              index 
+              element={<PrivateRouteAdmin component={<AdminDashboard />} />} />
+            <Route 
+              path="users" 
+              element={<PrivateRouteAdmin component={<ManageUsers />} />} />
+            <Route 
+              path="tournaments" 
+              element={<PrivateRouteAdmin component={<ManageTournaments />} />} />
+            <Route 
+              path="forum" 
+              element={<PrivateRouteAdmin component={<ForumDiscussions />} />} />
+            <Route 
+              path="replays" 
+              element={<PrivateRouteAdmin component={<ReplayManagement />} />} />
           </Route>
 
           {/* Routes for main pages and details
@@ -72,21 +86,52 @@ function App() {
           />
           <Route 
             path="/playlist" 
-            element={<Playlist />} 
+            element={<PrivateRoute component={<Playlist />} />} 
           />
 
           {/* Routes for Tournament and Tournament Details */}
-          <Route exact path="/tournament" element={<Tournament />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/profile/edit" element={<ProfileEdit />} />
-          <Route exact path="/tournament/:id" element={<DetailTournament />} />
-          <Route path="/followed-tournament" element={<FollowedTournament />} />
-          <Route path="/followed-tournament/:id" element={<DetailFollowedTournament />} />
-          <Route path="/followed-tournament/:id/teams" element={<TeamList />} />
-          <Route path="/followed-tournament/:id/teams/:teamId" element={<TeamDetail />} />
+          {/* Routes for Tournament and Tournament Details */}
+          <Route
+            exact
+            path="/tournament"
+            element={<PrivateRoute component={<Tournament />} />}
+          />
+          <Route
+            path="/profile"
+            element={<PrivateRoute component={<Profile />} />}
+          />
+          <Route
+            path="/profile/edit"
+            element={<PrivateRoute component={<ProfileEdit />} />}
+          />
+          <Route
+            exact
+            path="/tournament/:id"
+            element={<PrivateRoute component={<DetailTournament />} />}
+          />
+          <Route
+            path="/followed-tournament"
+            element={<PrivateRoute component={<FollowedTournament />} />}
+          />
+          <Route
+            path="/followed-tournament/:id"
+            element={<PrivateRoute component={<DetailFollowedTournament />} />}
+          />
+          <Route
+            path="/followed-tournament/:id/teams"
+            element={<PrivateRoute component={<TeamList />} />}
+          />
+          <Route
+            path="/followed-tournament/:id/teams/:teamId"
+            element={<PrivateRoute component={<TeamDetail />} />}
+          />
 
           {/* Route for registration page */}
-          <Route path="/tournament-registration/:id" element={<TournamentRegistration />} />
+          <Route
+            path="/tournament-registration/:id"
+            element={<PrivateRoute component={<TournamentRegistration />} />}
+          />
+
 
           {/* Fallback route if not found */}
           <Route path="*" element={<Navigate to="/home" replace />} />

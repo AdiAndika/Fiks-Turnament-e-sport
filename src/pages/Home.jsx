@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Typography } from "@material-tailwind/react";
-import Tournament from "./Tournament/GameData";
-import { useNavigate } from "react-router-dom";  // Import useNavigate
-import './Home.css';
+import { useNavigate } from "react-router-dom";
 import { Footer } from "@/widgets/layout";
+import { getDataPrivate, getImage } from "@/utils/api";
+import "./Home.css";
 
 export function Home() {
-  const [heroImage, setHeroImage] = useState(
-  );
+  const [heroImage, setHeroImage] = useState();
+  const [tournaments, setTournaments] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
 
-  const navigate = useNavigate(); // Deklarasi useNavigate
+  const navigate = useNavigate();
 
+  // Mengubah hero image secara berkala
   useEffect(() => {
     const images = [
       "https://mmorpgturkiye.com/wp-content/uploads/2019/07/mmorpg-turkiye-tanitim-pubg-2.jpg",
@@ -31,8 +34,30 @@ export function Home() {
     return () => clearInterval(interval);
   }, []);
 
+  // Fetch data turnamen menggunakan API
+  useEffect(() => {
+    const fetchTournaments = async () => {
+      setIsLoading(true);
+      try {
+        const response = await getDataPrivate("/api/v1/tournaments/read");
+        if (response?.datas) {
+          setTournaments(response.datas);
+        } else {
+          setErrMsg("Cannot fetch tournament data");
+        }
+      } catch (error) {
+        console.error(error);
+        setErrMsg("Data fetch failed");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTournaments();
+  }, []);
+
   const handleCardClick = (id) => {
-    navigate(`/tournament/${id}`);  // Navigasi ke halaman detail turnamen sesuai ID
+    navigate(`/tournament/${id}`);
   };
 
   return (
@@ -49,7 +74,6 @@ export function Home() {
             <Typography variant="lead" className="lead-text">
               Explore epic tournaments and events.
             </Typography>
-            {/* Tombol "Join Now" dihapus */}
           </div>
         </div>
       </div>
@@ -59,30 +83,34 @@ export function Home() {
         <Typography variant="h3" className="tournament-title">
           Tournament and Event
         </Typography>
-        <div className="tournament-cards">
-          {Tournament.slice(0, 3).map((event) => (
-            <div
-              key={event.id}
-              className="tournament-card"
-              onClick={() => handleCardClick(event.id)}  // Menambahkan event click
-            >
-              <img
-                src={event.image}
-                alt={event.name}
-                className="tournament-image"
-              />
-              <div className="tournament-name">
-                <Typography variant="h5">{event.name}</Typography>
+        {isLoading ? (
+          <p>Loading tournaments...</p>
+        ) : errMsg ? (
+          <p className="error-message">{errMsg}</p>
+        ) : (
+          <div className="tournament-cards">
+            {tournaments.slice(0, 3).map((event) => (
+              <div
+                key={event.tournament_id}
+                className="tournament-card"
+                onClick={() => handleCardClick(event.tournament_id)}
+              >
+                <img
+                  src={getImage(event.tournament_banner_path)}
+                  alt={event.tournament_name}
+                  className="tournament-image"
+                />
+                <div className="tournament-name">
+                  <Typography variant="h5">{event.tournament_name}</Typography>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Footer Section */}
-      <div>
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 }

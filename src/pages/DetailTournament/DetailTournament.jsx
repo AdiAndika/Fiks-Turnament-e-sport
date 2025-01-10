@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./DetailTournament.css";
-import { deleteDataPrivate, getDataPrivate, sendDataPrivate } from "@/utils/api";
+import { deleteDataPrivate, getDataPrivate, sendDataPrivate, getImage } from "@/utils/api";
 
 const DetailTournament = () => {
   const { id } = useParams();
@@ -95,7 +95,7 @@ const DetailTournament = () => {
     <div className="detail-container">
       <div className="detail-header">
         <img
-          src="https://wstatic-prod-boc.krafton.com/common/news/20230706/LGhhK1J2.jpg"
+          src={getImage(detailTournaments.tournament_banner_path)}
           alt={detailTournaments.tournament_name}
           className="detail-image"
         />

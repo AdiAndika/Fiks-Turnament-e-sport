@@ -9,11 +9,14 @@ import {
   Form,
   Input,
   notification,
+  Select,
 } from "antd";
 import { EditOutlined, DeleteOutlined, PlusCircleOutlined } from "@ant-design/icons";
-import { getData, sendData, deleteData } from "@/utils/api-playlist";  // Pastikan path ini benar
+import { getData, sendData, deleteData } from "@/utils/api-playlist";
+
 const { Content } = Layout;
 const { Title } = Typography;
+const { Option } = Select;
 
 export default function ReplayManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,14 +27,21 @@ export default function ReplayManagement() {
   const [idSelected, setIdSelected] = useState(null);
   const [api, contextHolder] = notification.useNotification();
 
-  // Fetch replays data
+  const genres = [
+    { id: 1, name: "Music" },
+    { id: 2, name: "Song" },
+    { id: 3, name: "Education" },
+    { id: 4, name: "Others" },
+    { id: 5, name: "Movie" },
+  ];
+
   useEffect(() => {
     fetchReplays();
   }, []);
 
   const fetchReplays = () => {
     setIsLoading(true);
-    getData("/api/playlist/17")  // Sesuaikan endpoint dengan API Anda
+    getData("/api/playlist/17")
       .then((resp) => {
         setIsLoading(false);
         if (resp?.datas && Array.isArray(resp.datas)) {
@@ -53,53 +63,61 @@ export default function ReplayManagement() {
     });
   };
 
-  // Handle edit functionality
   const handleEdit = (record) => {
     setIsEdit(true);
-    setIdSelected(record.id);
+    setIdSelected(record.id_play);
     form.setFieldsValue({
-      id: record.id,
-      title: record.title,
-      videoUrl: record.videoUrl,
-      thumbnailUrl: record.thumbnailUrl,
+      play_name: record.play_name,
+      play_description: record.play_description,
+      play_url: record.play_url,
+      play_thumbnail: record.play_thumbnail,
+      play_genre: record.play_genre,
     });
     setIsModalOpen(true);
   };
 
-  // Handle delete functionality
   const handleDelete = (id) => {
     Modal.confirm({
       title: "Are you sure you want to delete this replay?",
       onOk: () => {
-        deleteData(`/api/playlist/17/${id}`, "DELETE")
+        deleteData(`/api/playlist/${id}`, "DELETE")
           .then(() => {
             showAlert("success", "Deleted", "Replay deleted successfully");
-            fetchReplays();  // Refresh data after deletion
+            fetchReplays();
           })
           .catch((err) => {
             showAlert("error", "Failed to delete replay", err.toString());
           });
       },
+      okButtonProps: {
+        style: { backgroundColor: "black", borderColor: "black" }
+      },
+      cancelButtonProps: {
+        style: { borderColor: "black", color: "black" }
+      }
     });
   };
 
-  // Handle adding new replay
   const handleAddNew = () => {
     form.resetFields();
     setIsEdit(false);
     setIsModalOpen(true);
   };
 
-  // Handle form submission (Create/Update)
   const handleFinish = (values) => {
-    let requestUrl = isEdit ? `/api/playlist/17/${idSelected}/update` : "/api/playlist/17";  // Adjust URL for update or create
-    const requestMethod = isEdit ? "PUT" : "POST";  // Use PUT for update
+    let requestUrl = isEdit ? `/api/playlist/update/${idSelected}` : "/api/playlist/17";
+    let formData = new FormData();
+    for (let key in values) {
+      formData.append(key, values[key]);
+    }
 
-    sendData(requestUrl, values, requestMethod)
+    const method = "POST"; // Use "POST" for both add and update
+
+    sendData(requestUrl, formData, method)
       .then((resp) => {
         if (resp?.datas) {
           showAlert("success", "Success", "Replay saved successfully");
-          fetchReplays();  // Refresh data after save
+          fetchReplays();
           setIsModalOpen(false);
         } else {
           showAlert("error", "Failed to save replay", "Could not save replay data");
@@ -113,23 +131,33 @@ export default function ReplayManagement() {
   const columns = [
     {
       title: "ID",
-      dataIndex: "id",
-      key: "id",
+      dataIndex: "id_play",
+      key: "id_play",
     },
     {
       title: "Title",
-      dataIndex: "title",
-      key: "title",
+      dataIndex: "play_name",
+      key: "play_name",
+    },
+    {
+      title: "Description",
+      dataIndex: "play_description",
+      key: "play_description",
     },
     {
       title: "Video URL",
-      dataIndex: "videoUrl",
-      key: "videoUrl",
+      dataIndex: "play_url",
+      key: "play_url",
     },
     {
       title: "Thumbnail URL",
-      dataIndex: "thumbnailUrl",
-      key: "thumbnailUrl",
+      dataIndex: "play_thumbnail",
+      key: "play_thumbnail",
+    },
+    {
+      title: "Genre",
+      dataIndex: "play_genre",
+      key: "play_genre",
     },
     {
       title: "Actions",
@@ -139,7 +167,7 @@ export default function ReplayManagement() {
           <Button type="link" onClick={() => handleEdit(record)}>
             <EditOutlined /> Edit
           </Button>
-          <Button type="link" danger onClick={() => handleDelete(record.id)}>
+          <Button type="link" danger onClick={() => handleDelete(record.id_play)}>
             <DeleteOutlined /> Delete
           </Button>
         </>
@@ -171,7 +199,7 @@ export default function ReplayManagement() {
           <Table
             dataSource={dataSource}
             columns={columns}
-            rowKey="id"
+            rowKey="id_play"
             loading={isLoading}
             pagination={false}
           />
@@ -179,7 +207,7 @@ export default function ReplayManagement() {
 
         <Modal
           title={isEdit ? "Edit Replay" : "Add Replay"}
-          visible={isModalOpen}
+          open={isModalOpen}
           onCancel={() => setIsModalOpen(false)}
           footer={null}
         >
@@ -188,27 +216,32 @@ export default function ReplayManagement() {
             layout="vertical"
             onFinish={handleFinish}
             initialValues={{
-              id: "",
-              title: "",
-              videoUrl: "",
-              thumbnailUrl: "",
+              play_name: "",
+              play_description: "",
+              play_url: "",
+              play_thumbnail: "",
+              play_genre: "",
             }}
           >
-            <Form.Item name="id" hidden>
-              <Input />
-            </Form.Item>
-
             <Form.Item
               label="Title"
-              name="title"
+              name="play_name"
               rules={[{ required: true, message: "Please enter the title" }]}
             >
               <Input placeholder="Enter the replay title" />
             </Form.Item>
 
             <Form.Item
+              label="Description"
+              name="play_description"
+              rules={[{ required: true, message: "Please enter the description" }]}
+            >
+              <Input.TextArea placeholder="Enter the replay description" />
+            </Form.Item>
+
+            <Form.Item
               label="Video URL"
-              name="videoUrl"
+              name="play_url"
               rules={[{ required: true, message: "Please enter the video URL" }]}
             >
               <Input placeholder="Enter the video URL" />
@@ -216,10 +249,22 @@ export default function ReplayManagement() {
 
             <Form.Item
               label="Thumbnail URL"
-              name="thumbnailUrl"
+              name="play_thumbnail"
               rules={[{ required: true, message: "Please enter the thumbnail URL" }]}
             >
               <Input placeholder="Enter the thumbnail URL" />
+            </Form.Item>
+
+            <Form.Item
+              label="Genre"
+              name="play_genre"
+              rules={[{ required: true, message: "Please select a genre" }]}
+            >
+              <Select placeholder="Select genre">
+                {genres.map((genre) => (
+                  <Option key={genre.id} value={genre.name}>{genre.name}</Option>
+                ))}
+              </Select>
             </Form.Item>
 
             <Form.Item>
@@ -237,3 +282,4 @@ export default function ReplayManagement() {
     </Layout>
   );
 }
+

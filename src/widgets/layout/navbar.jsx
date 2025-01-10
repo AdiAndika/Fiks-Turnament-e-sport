@@ -11,6 +11,8 @@ import {
 } from "@material-tailwind/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { AuthContext } from "@/providers/AuthProvider";
+import { jwtStorage } from "../../utils/jwt_storage";
+import { useLocation, useNavigate } from "react-router-dom";
 
 
 export function Navbar({ brandName, routes, action }) {
@@ -22,6 +24,13 @@ export function Navbar({ brandName, routes, action }) {
       () => window.innerWidth >= 960 && setOpenNav(false)
     );
   }, []);
+
+  const navigate = useNavigate()
+
+  const doLogout = () => {
+    jwtStorage.removeItem();
+    navigate("/sign-in", { replace: true });
+  };
 
   const navList = (
     <ul className="mb-4 mt-2 flex flex-col gap-2 text-inherit lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
@@ -119,7 +128,7 @@ export function Navbar({ brandName, routes, action }) {
 Navbar.defaultProps = {
   brandName: "Ginger E-Sport",
   action: (
-      <Button variant="gradient" size="sm" fullWidth onClick={() => logout()}>
+      <Button variant="gradient" size="sm" fullWidth onClick={() => doLogout()}>
         Log Out
       </Button>
   ),

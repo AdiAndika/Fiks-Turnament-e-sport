@@ -4,7 +4,7 @@ import './TournamentList.css';
 import tournaments from './GameData';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { Footer } from '@/widgets/layout';
-import { getDataPrivate } from '@/utils/api';
+import { getDataPrivate, getImage } from '@/utils/api';
 
 const Tournament = () => {
   const [searchVisible, setSearchVisible] = useState(false);
@@ -56,6 +56,9 @@ const Tournament = () => {
     tournament.tournament_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  let tournament_banner_url = getImage(tournaments.tournament_banner_path);
+  console.log("banner_url", tournament_banner_url);
+
   return (
     <div className="container">
       <div className="header">
@@ -87,7 +90,7 @@ const Tournament = () => {
             onClick={() => navigate(`/tournament/${tournament.tournament_id}`)} // Navigasi ke halaman detail dengan ID tournament
           >
             <img
-              src='https://wstatic-prod-boc.krafton.com/common/news/20230706/LGhhK1J2.jpg'//{tournament.tournament_name}
+              src={getImage(tournament.tournament_banner_path)}
               alt={tournament.tournament_name}
               className="tournament-image"
             />

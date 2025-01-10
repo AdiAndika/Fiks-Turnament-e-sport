@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getDataPrivate } from '@/utils/api'; // Import your API utility
 import './TournamentList.css';
 import { Footer } from '@/widgets/layout';
+import { getImage } from '@/utils/api';
 
 const FollowedTournaments = () => {
   const [followedTournaments, setFollowedTournaments] = useState([]);
@@ -53,7 +54,7 @@ const FollowedTournaments = () => {
               onClick={() => navigate(`/tournament/${tournament.tournament_id}`)}
             >
               <img
-                src='https://wstatic-prod-boc.krafton.com/common/news/20230706/LGhhK1J2.jpg'  //{tournament.image}
+                src={getImage(tournament.tournament_banner_path)}
                 alt={tournament.tournament_name}
                 className="tournament-image"
               />
